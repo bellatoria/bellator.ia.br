@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driver NVIDIA para IA local sem dor | Bellator.IA</title>
+  <meta name="description" content="Guia pratico para alinhar driver NVIDIA, compatibilidade e hardware minimo para rodar IA local com menos retrabalho.">
+  <meta name="theme-color" content="#050816">
+  <style>html,body{margin:0;background:#050816;color:#e9f2ff}body{font-family:"Georgia","Times New Roman",serif}</style>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page-slug="agora/driver-nvidia-para-ia-local-sem-dor" data-section="agora" data-page-type="article">
+  <div class="site-shell">
+    <header class="masthead wrap">
+      <nav class="navbar">
+        <a class="brand" href="/">
+          <span class="brand-mark">BI</span>
+          <span class="brand-copy"><strong>Bellator.IA</strong><span>Guias, leituras e historias</span></span>
+        </a>
+        <div class="nav-links">
+          <a class="active" href="/agora/">Agora</a>
+          <a href="/guides/">Guias</a>
+          <a href="/stories/">Historias</a>
+          <a href="/explore/">Explorar</a>
+          <a href="/about">Sobre</a>
+        </div>
+      </nav>
+    </header>
+    <main class="page-main wrap">
+      <div class="page-layout">
+        <article class="article-shell">
+          <span class="page-tag">Setup</span>
+          <h1>Driver NVIDIA para IA local sem dor</h1>
+          <p class="article-intro">Este guia nao tenta repetir o tutorial generico que manda instalar qualquer driver e rezar. A ideia aqui e reduzir retrabalho: entender a compatibilidade minima, diagnosticar erros comuns e decidir quando o gargalo e software ou hardware.</p>
+
+          <div class="hero-actions" style="margin-top:1.4rem;margin-bottom:1.8rem">
+            <a class="button primary" href="#matriz-compatibilidade">Ver matriz de compatibilidade</a>
+            <a class="button secondary" href="#decisoes-hardware">Ir para decisoes de hardware</a>
+          </div>
+
+          <p><strong>Nota de transparencia:</strong> esta pagina inclui links de afiliado Amazon para hardware realmente relacionado a IA local. Se voce comprar por eles, Bellator.IA pode receber comissao sem custo adicional para voce.</p>
+
+          <h2 id="matriz-compatibilidade">1. Matriz de compatibilidade antes da instalacao</h2>
+          <p>O erro mais comum em IA local nao e “falta de tutorial”. E misturar sistema, objetivo e stack tecnica sem decidir a ordem certa. Use a matriz abaixo antes de instalar ou atualizar qualquer coisa.</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Cenario</th>
+                <th>Sistema</th>
+                <th>Prioridade</th>
+                <th>Decisao tecnica</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Estudo inicial e modelos leves</td>
+                <td>Windows ou Ubuntu</td>
+                <td>Estabilidade</td>
+                <td>Driver estavel e GPU ativa antes de mexer em app ou runtime</td>
+              </tr>
+              <tr>
+                <td>IA local com desempenho consistente</td>
+                <td>Ubuntu</td>
+                <td>Compatibilidade CUDA</td>
+                <td>Alinhar driver com a stack de inferencia que voce realmente vai usar</td>
+              </tr>
+              <tr>
+                <td>Ambiente hibrido com WSL</td>
+                <td>Windows + Linux</td>
+                <td>Conflito de camadas</td>
+                <td>Validar driver no host e exposicao correta da GPU no subsistema</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>Se voce ainda esta montando a maquina, vale olhar primeiro as opcoes de GPU antes de quebrar seu ambiente atual.</p>
+          <p>
+            <a
+              class="affiliate-link"
+              href="https://www.amazon.com.br/s?k=placa+de+video+nvidia+rtx&tag=bellatoria-20"
+              target="_blank"
+              rel="nofollow sponsored noopener"
+              data-track="affiliate_click"
+              data-target-slug="amazon-gpu-nvidia-ia-local"
+              data-block-name="nvidia-driver-offer-gpu-primary"
+              data-cta-name="ver-gpu-nvidia-ia-local"
+              data-partner="amazon"
+              data-destination-type="affiliate"
+            >Ver GPUs NVIDIA para IA local</a>
+          </p>
+
+          <h2>2. Falhas comuns e como diagnosticar rapido</h2>
+          <h3>Falha A. A GPU nao aparece para o runtime</h3>
+          <ul>
+            <li>Sinal: o app de IA roda em CPU e ignora sua placa.</li>
+            <li>Causa provavel: driver ausente, corrompido ou GPU nao reconhecida pelo sistema.</li>
+            <li>Acao: validar o reconhecimento da placa no sistema operacional antes de culpar Ollama, PyTorch ou qualquer outra ferramenta.</li>
+          </ul>
+
+          <h3>Falha B. Driver e stack CUDA fora de fase</h3>
+          <ul>
+            <li>Sinal: erro de inicializacao, biblioteca faltando ou runtime quebrando sem motivo claro.</li>
+            <li>Causa provavel: versoes desalinhadas entre driver e ambiente de execucao.</li>
+            <li>Acao: travar uma combinacao estavel e evitar upgrade em cadeia no mesmo dia.</li>
+          </ul>
+
+          <h3>Falha C. Setup quebrou depois de update automatico</h3>
+          <ul>
+            <li>Sinal: ontem funcionava, hoje nao.</li>
+            <li>Causa provavel: atualizacao automatica de driver, kernel ou camada do sistema.</li>
+            <li>Acao: manter checkpoints simples e uma rotina de rollback para a maquina de IA.</li>
+          </ul>
+
+          <h2>3. Sanity checklist para IA local</h2>
+          <ul>
+            <li>GPU detectada pelo sistema operacional.</li>
+            <li>Driver carregado sem erro critico.</li>
+            <li>Runtime de IA reconhece aceleracao por GPU.</li>
+            <li>Teste curto de inferencia sem cair para CPU.</li>
+            <li>Temperatura e consumo em faixa segura no primeiro teste mais longo.</li>
+          </ul>
+
+          <div class="card" style="margin-top:1rem">
+            <h3>Kit base para nao travar em armazenamento e memoria</h3>
+            <p>Quando o problema nao e mais o driver, os gargalos mais chatos aparecem em disco e RAM. Modelos locais, checkpoints e datasets pequenos ja pedem um minimo de folga.</p>
+            <div class="hero-actions" style="margin-top:1rem">
+              <a
+                class="button secondary affiliate-link"
+                href="https://www.amazon.com.br/s?k=ssd+nvme+1tb&tag=bellatoria-20"
+                target="_blank"
+                rel="nofollow sponsored noopener"
+                data-track="affiliate_click"
+                data-target-slug="amazon-ssd-nvme-ia-local"
+                data-block-name="nvidia-driver-offer-storage"
+                data-cta-name="ver-ssd-nvme-ia-local"
+                data-partner="amazon"
+                data-destination-type="affiliate"
+              >Ver SSD NVMe para modelos e datasets</a>
+              <a
+                class="button secondary affiliate-link"
+                href="https://www.amazon.com.br/s?k=memoria+ram+32gb+ddr4&tag=bellatoria-20"
+                target="_blank"
+                rel="nofollow sponsored noopener"
+                data-track="affiliate_click"
+                data-target-slug="amazon-kit-base-ia-local"
+                data-block-name="nvidia-driver-offer-kit-base"
+                data-cta-name="ver-kit-base-ia-local"
+                data-partner="amazon"
+                data-destination-type="affiliate"
+              >Ver kit base para rodar modelos locais</a>
+            </div>
+          </div>
+
+          <h2 id="decisoes-hardware">4. Decisoes de hardware sem desperdicio</h2>
+          <p>Se o problema nao e so driver, e sim limite da maquina, siga esta ordem:</p>
+          <ol>
+            <li>Defina o objetivo: estudo leve, projetos intermediarios ou uso frequente.</li>
+            <li>Escolha a categoria de GPU para esse objetivo, nao a placa mais chamativa da timeline.</li>
+            <li>Garanta fonte e refrigeracao proporcionais para manter estabilidade.</li>
+            <li>Adicione RAM e SSD quando o gargalo real aparecer.</li>
+          </ol>
+
+          <div class="callout">
+            <strong>Diagnostico antes de compra</strong>
+            <p>Se voce ainda nao sabe se o problema e driver, VRAM, RAM ou armazenamento, nao compre no impulso. Primeiro rode o checklist acima e entenda o gargalo dominante.</p>
+          </div>
+
+          <h2>5. Proximo passo recomendado</h2>
+          <ul class="path-list">
+            <li>
+              <strong><a
+                href="/guides/cursos-e-recursos-para-aprender-inteligencia-artificial/"
+                data-track="internal_click"
+                data-target-slug="guides-cursos-e-recursos-ia"
+                data-block-name="nvidia-driver-route-cursos"
+                data-cta-name="seguir-para-cursos-ia"
+              >Cursos e recursos</a></strong>
+              <span>Depois do setup, transforme ambiente pronto em trilha de estudo com mais criterio.</span>
+            </li>
+            <li>
+              <strong><a
+                href="/guides/melhores-livros-de-inteligencia-artificial-para-comecar/"
+                data-track="internal_click"
+                data-target-slug="guides-livros-ia-comecar"
+                data-block-name="nvidia-driver-route-livros"
+                data-cta-name="ver-livros-ia-base"
+              >Livros recomendados</a></strong>
+              <span>Fortalece base de ML e IA antes de subir a complexidade do stack local.</span>
+            </li>
+            <li>
+              <strong><a href="/guides/roadmap-pratico-de-machine-learning-para-estudo-autodidata/">Roteiro pratico</a></strong>
+              <span>Organiza o proximo passo depois que o ambiente estiver realmente funcional.</span>
+            </li>
+          </ul>
+        </article>
+
+        <aside class="aside-card card">
+          <h3>Atalhos</h3>
+          <ul>
+            <li><a href="/agora/">Voltar para Agora</a></li>
+            <li><a href="/guides/cursos-e-recursos-para-aprender-inteligencia-artificial/">Cursos e recursos</a></li>
+            <li><a href="/guides/melhores-livros-de-inteligencia-artificial-para-comecar/">Livros</a></li>
+          </ul>
+          <hr style="border:0;border-top:1px solid rgba(88,220,255,0.16);margin:1rem 0">
+          <h3>O que esta pagina testa</h3>
+          <ul>
+            <li>Se uma dor pratica de setup atrai mais trafego do que uma pagina puramente editorial.</li>
+            <li>Se hardware realmente relacionado gera clique afiliado neste contexto.</li>
+            <li>Se a rota para cursos e livros ganha tracao a partir de uma pagina de entrada tecnica.</li>
+          </ul>
+        </aside>
+      </div>
+    </main>
+    <script data-goatcounter="https://bellator-ia.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    <script src="/analytics.js"></script>
+  </div>
+</body>
+</html>
